@@ -1,0 +1,182 @@
+# 最初的小试
+
+<center>
+    <img src="https://i.loli.net/2021/09/25/TKdWY7yGUbhlo3A.png" alt="mywork1" style="zoom: 50%;" />
+    <img src="https://i.loli.net/2021/09/25/XYSWVb9Uj8ayDMk.png" alt="mywork2" style="zoom: 50%;" />
+    <img src="https://i.loli.net/2021/09/25/e2ntKzW8m36Egyi.png" alt="、" style="zoom:50%;" />
+    <img src="https://i.loli.net/2021/09/25/F3vgc89LWDapohY.png" alt="mywork4" style="zoom:50%;" />
+     <img src="https://i.loli.net/2021/09/25/QO6HbmMo5INFKfa.png" style="zoom:50%;" />
+    <img src="https://i.loli.net/2021/09/25/YXWymVMG5S7gqn1.png" alt="mywork6" style="zoom:50%;" />
+    <img src="https://i.loli.net/2021/09/25/cxsAW5byph9Bd1K.png" alt="mywork7" style="zoom:50%;" />
+
+​    
+
+​    
+
+</center>
+
+这些比较简单，源码不必要放置，尝试用HTML排版，点击图片查看HTML代码
+
+图片均上传至网络图库picgo，保证在任何情况下都可打开
+
+
+
+# 尝试有目标地制作图片
+
+![mywork13](https://i.loli.net/2021/09/25/pqSZOlgVFbwsr7k.png)
+
+```java
+size(600,800);
+noStroke();
+background(255);
+for(int i=0;i<width;i=i+20){  
+  for(int j=0;j<height;j=j+20){
+    if(i==260 && j==240){  //最中心红色三角形
+      fill(200,0,0);
+      triangle(i+2,j+2,i+6,j+18,i+18,j+11);
+    }else if(i<480 && i>100 && j<280 && j>80){  //中部整齐的蓝色三角形阵列
+      fill(0,150,255);
+      triangle(i+10,j+2,i+2,j+18,i+18,j+18);     
+    }else{        //外围灰色不规则三角形
+      fill(200,0,0,50);
+      triangle(random(i,i+20),random(j,j+20),random(i,i+20),random(j,j+20),random(i,i+20),random(j,j+20));
+    }
+  }
+}
+ save("mywork13.png");
+```
+
+网络视频的教程，一般——特殊——一般的思想
+
+
+
+![mywork8](https://i.loli.net/2021/09/25/wLpFMSaEGW74Nte.png)
+
+突发奇想，想到比较著名的大脑视觉错觉图片，图中的每一个灰色的横线都是平行的，但看起来左边密集，右边稀疏
+
+```java
+size(600, 400);
+background(255); 
+for(float j=0;j<10;j++){
+  for(float i=0;i<30;i++){
+  stroke(120);
+  strokeWeight(2);
+  fill(0);
+  rect(-400+10+i*40+j*3,j*20-10,20,20);
+  fill(255);
+  rect(-400+10+i*40+20+j*3,j*20-10,20,20);
+  }
+}
+for(float j=10;j<20;j++){
+  for(float i=0;i<30;i++){
+  stroke(120);
+  strokeWeight(2);
+  fill(0);
+  rect(-400+10+i*40+30-(j-10)*3,j*20-10,20,20);
+  fill(255);
+  rect(-400+10+i*40+20+30-(j-10)*3,j*20-10,20,20);
+  }
+}
+save("mywork8.png");
+```
+
+# 尝试使用抽象风格化点阵
+
+
+
+![shejixueyuan](C:\Users\tkp\Desktop\ProcessingReference\002 图片和刺绣法\002 鍥剧墖鍜屽埡缁ｆ硶\Nike_Poster\data\shejixueyuan.png)
+
+​																	  	设计学院原图
+
+
+
+![mywork9](https://i.loli.net/2021/09/25/Mm3PNdbcpBnTzsl.png)
+
+```java
+size(2226,1162);
+PImage pic=loadImage("shejixueyuan.png");
+pic.resize(width,height);
+background(255);
+noStroke();
+float threshold=110;   //亮度值高于110的地方，不显示任何图案
+
+for(int x=0;x<width;x+=2){
+  for(int y=0;y<height;y+=10){     //取点
+    color c=pic.get(x,y);          
+    if(brightness(c)<threshold){
+      
+      fill(50);      
+      float diameter=map(brightness(c),threshold,0,2,12); //映射     
+      ellipse(x,y,diameter,diameter);
+    }
+  }
+}
+save("mywork9.png");
+```
+
+
+
+
+
+![mywork10](https://i.loli.net/2021/09/25/9VlavXByDs5GFcg.png)
+
+```java
+PImage pic;
+size(2226, 1162);
+pic=loadImage("shejixueyuan.png");
+pic.resize(width, height);
+for (int i=0; i<300000; i++) {  //屏幕上一共戳了300000个小圆
+  
+  float x=randomGaussian()*200+width/2;  //使用高斯分布，以屏幕中心为中心，横坐标偏移一个随机值，该值呈高斯分布
+  float y=randomGaussian()*100+height/2;
+  
+  color c=(pic.get(int(x), int(y)));  //从图片上的相同位置取色，由于是单位所以强转
+  fill(c);
+  noStroke();
+  float diameter=random(6);  //每个小圆的直径随机
+  ellipse(x, y, diameter, diameter);
+  save("mywork10.png");
+}
+```
+
+此做法相当卡顿，数分种只生成了很少一部分圆点，希望通过之后的学习来进行算法优化
+
+
+
+![mywork11](https://i.loli.net/2021/09/25/5bC3vZQkEyofL8d.png)
+
+```java
+PImage pic;
+int yline=250;  //分界线，线上面的点不动，线下面的点坍塌
+size(1113, 581);
+pic=loadImage("shejixueyuan.png");  //载入原始图片
+pic.resize(width,height);
+strokeWeight(2);
+
+for (int y=pic.height-1; y>=0; y--) {  //反向循环，从下往上画
+
+  if (y<yline) {    //分界线之上时，像素点不变
+    for (int x=0; x<pic.width; x++) {
+      if (alpha(pic.get(x, y))>0) {
+        stroke(pic.get(x, y));
+        point(x, y);
+      }
+    }
+  } else {      //分界线之下时
+    float factor=map(y, yline, pic.height, 0, 500);    //factor 是塌陷偏移的程度，越靠下，程度越大
+    
+    for (int x=0; x<pic.width; x++) {
+      if (alpha(pic.get(x, y))>0) {
+        float offset=abs((randomGaussian())*factor);  //实际偏移量由factor 和高斯分布共同决定,abs取绝对值
+        stroke(pic.get(x, y), 200);  //原图里未偏移位置的颜色
+        point(x+random(-factor*0.1, factor*0.1), y+offset);  // //横坐标向左右随机少量偏移，纵坐标向下偏移
+      }
+    }
+  }
+  
+}
+save("mywork11.png");
+```
+
+这张图片上传图云失败，发现是图片过大的问题，后将图片尺寸改小
+
