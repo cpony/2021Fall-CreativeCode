@@ -1,0 +1,482 @@
+import java.util.ArrayList; 
+//* *** *** *** *** ***
+//*
+//* Overrided
+//*
+//* *** *** *** *** ***
+//- --- --- ---
+
+//- --- --- ---
+//- public
+//- --- --- ---
+//-
+int pbLeMouseCurrent=0;
+boolean pbLeTestFlag=false;
+int pbLePannelFocus=0;
+boolean pbLeShowsMenu=false;
+//-
+EcContainer pbTheContainer = new EcContainer();
+//-
+EcButton pbTheQuitSW = new EcButton(36, 18, "quit", 999);
+EcButton pbTheMenuSW = new EcButton(36, 18, "menu", 999);
+EcButton[] pbThoseSelectSW=new EcButton[8];
+//-
+
+
+public void setup() {size(320, 240);noStroke();frameRate(16);textAlign(LEFT, TOP);ellipseMode(CENTER);
+  
+  //--
+  //-- > add pannel to container < --
+  pbTheContainer.ccAddPannel(pbHerPannelOne);stHerPannelOne();
+  pbTheContainer.ccAddPannel(pbHerPannelTwo);stHerPannelTwo();
+  pbTheContainer.ccAddPannel(pbHerPannelThree);stHerPannelThree();
+  //--
+  //-- > get menu to work < --
+  for(int i=0;i<pbThoseSelectSW.length;i++){
+    pbThoseSelectSW[i]=new EcButton(36, 18, "#"+nf(i,2), 999);
+    pbThoseSelectSW[i].cmAct=true;
+  }
+  //--
+  pbTheMenuSW.ccRepos(pbTheQuitSW.ccGetPos(), 200, 0);
+  pbThoseSelectSW[1].ccRepos(pbTheQuitSW.ccGetPos(), 18, 0);
+  for(int i=2;i<pbThoseSelectSW.length;i++){pbThoseSelectSW[i].ccRepos(pbThoseSelectSW[i-1].ccGetPos(), 2, 0);}
+  //--
+  //-- > bring menu status to pannels < --CANT WORK BEFORE MENU IS SET TO WORK
+  fsApplyPannelEnablness();
+  //--
+}//+++
+
+
+public void draw() { 
+  //--
+  background(0);
+  //--
+  //-- > infomation < --
+  fill(0xCC);
+  fnTextInt("mosID>", pbTheContainer.ccCheckMouseID(), 13);
+  fnTextInt("P-Fcs>", pbLePannelFocus, 14);
+  //--
+  //-- > pannel base < --
+  pbTheContainer.ccDrawElemt();
+  //--
+  //-- > system element < --
+  pbTheMenuSW.ccUpdate();
+  pbTheQuitSW.ccUpdate();
+  //--
+  if(pbLeShowsMenu){
+    for(int i=1;i<4;i++){
+      pbThoseSelectSW[i].ccUpdate();
+    }
+  }if(pbTheMenuSW.ccIsMouseOver()){pbLeShowsMenu=true;}
+  //--
+  if(pbLeTestFlag){fill(0xEE,0x77,0x77);rect(width-20,height-20,16,16);}pbLeTestFlag=false;
+  //--
+}//+++
+
+
+public void mouseDragged(){
+  //--
+  //-- > general drag operate  < --
+  EcPannel lpPannel=pbTheContainer.ccGetPannel(pbLePannelFocus);
+  if(lpPannel!=null){lpPannel.ccRepos(mouseX, mouseY);}
+  //--
+  //-- > update position  < --MODIFY WHEN NEW PANNEL HAS BEAN ADDED
+  fsReposPannelOne();
+  fsReposPannelTwo();
+  fsReposPannelThree();
+  //--
+}//+++
+
+
+public void mousePressed() {
+  //--
+  //-- > get ID for both LEFT and RIGHT to USE  < --
+  int lpID=pbTheContainer.ccCheckMouseID();
+  //--
+  //-- > right click  < --
+  if(mouseButton==RIGHT){
+    if(lpID%10==0){
+      pbLePannelFocus=lpID;
+      if(lpID!=0){pbTheContainer.ccSetPriority(lpID);}
+    }
+    fsApplyPannelFocusStatus();
+  }
+  //--
+  //-- > left click  < --
+  if(mouseButton==LEFT){
+    if(pbTheQuitSW.ccIsMouseOver()){fsPover();return;}
+    if(pbLeShowsMenu){
+      for(int i=1;i<4;i++){
+        if(pbThoseSelectSW[i].ccIsMouseOver()){pbThoseSelectSW[i].ccFlip();fsApplyPannelEnablness();return;}
+      }
+    }
+    //--
+    if(lpID%10!=0 && pbLePannelFocus==0){zeldaClick(lpID);}
+    pbLeShowsMenu=false;
+  }
+  //--
+}//+++
+
+
+public void keyPressed() {
+  //--
+  switch(key){
+    //--
+    case 'q':fsPover();
+    default:break;
+  }
+  //--
+}//+++
+//< <<< <<< <<< <<< <<< Overrided
+
+
+
+
+
+//* *** *** *** *** ***
+//*
+//* Operate
+//*
+//* *** *** *** *** ***
+//- --- --- ---
+void fsApplyPannelFocusStatus(){
+  for(EcPannel itJ:pbTheContainer.lpList){for(EcElement itK:itJ.cmList){
+     itK.cmAct=(itK.cmID==pbLePannelFocus); 
+  }}
+}//+++
+
+void fsApplyPannelEnablness(){
+  for(int i=1;i<4;i++){    
+    pbTheContainer.ccGetPannel(i*10).cmEnable=pbThoseSelectSW[i].cmAct;
+  }
+}//+++
+
+void fsPover(){
+  exit();
+}//+++
+
+void zeldaRefresh(){
+  pbMyLampOne.cmAct=pbMyButtonThree.cmAct;
+  pbMyLampTwo.cmAct=pbMyButtonOne.cmAct;
+  pbMyLampThree.cmAct=pbMyButtonTwo.cmAct;
+}//+++
+
+void zeldaClick(int pxID){switch(pxID){
+    case 11:pbMyLampTwo.ccFlip();break;
+    case 21:pbMyLampThree.ccFlip();break;
+    case 31:pbMyLampOne.ccFlip();break;
+    default:break;
+}}//+++
+
+//< <<< <<< <<< <<< <<< operate
+
+
+
+
+
+
+//* *** *** *** *** ***
+//*
+//* Pannels
+//*
+//* *** *** *** *** ***
+//- --- --- ---
+
+//- --- --- ---
+//- HerPannel One
+//- --- --- ---
+EcPannel pbHerPannelOne=new EcPannel(32, 32); 
+// <editor-fold defaultstate="collapsed" desc="P000:pbHerPannelOne">
+EcFrame pbMyFrameOne= new EcFrame(99, 99, 10,"#1");
+EcButton pbMyButtonOne = new EcButton(32, 20,"SW1", 11);
+EcLamp pbMyLampOne = new EcLamp(16, 16, 12);
+//--
+void stHerPannelOne(){
+  pbHerPannelOne.cmPannelID=pbMyFrameOne.cmID;
+  pbHerPannelOne.ccAddElement(pbMyFrameOne);
+  pbHerPannelOne.ccAddElement(pbMyButtonOne);
+  pbHerPannelOne.ccAddElement(pbMyLampOne);
+  fsReposPannelOne();
+}//+++
+void fsReposPannelOne(){
+  pbMyFrameOne.ccRepos(pbHerPannelOne.cmOrigin, 1, 1);
+  pbMyButtonOne.ccRepos(pbMyFrameOne.ccGetPos(), 5, 25);
+  pbMyLampOne.ccRepos(pbMyButtonOne.ccGetPos(), 16, 0);
+}//+++
+// </editor-fold>  
+
+
+//- --- --- ---
+//- HerPannel Two
+//- --- --- ---
+EcPannel pbHerPannelTwo=new EcPannel(48, 48); 
+// <editor-fold defaultstate="collapsed" desc="P000:pbHerPannelTwo">
+EcFrame pbMyFrameTwo= new EcFrame(99, 99, 20,"#2");
+EcButton pbMyButtonTwo = new EcButton(32, 20,"SW2", 21);
+EcLamp pbMyLampTwo = new EcLamp(16, 16, 22);
+//--
+void stHerPannelTwo(){
+  pbHerPannelTwo.cmPannelID=pbMyFrameTwo.cmID;
+  pbHerPannelTwo.ccAddElement(pbMyFrameTwo);
+  pbHerPannelTwo.ccAddElement(pbMyButtonTwo);
+  pbHerPannelTwo.ccAddElement(pbMyLampTwo);
+  fsReposPannelTwo();
+}//+++
+void fsReposPannelTwo(){
+  pbMyFrameTwo.ccRepos(pbHerPannelTwo.cmOrigin, 1, 1);
+  pbMyButtonTwo.ccRepos(pbMyFrameTwo.ccGetPos(), 10, 25);
+  pbMyLampTwo.ccRepos(pbMyButtonTwo.ccGetPos(), 16, 0);
+}//+++
+// </editor-fold>  
+
+
+//- --- --- ---
+//- HerPannel Three
+//- --- --- ---
+EcPannel pbHerPannelThree=new EcPannel(99, 99); 
+// <editor-fold defaultstate="collapsed" desc="P000:pbHerPannelThree">
+EcFrame pbMyFrameThree= new EcFrame(99, 99, 30,"#3");
+EcButton pbMyButtonThree = new EcButton(32, 20,"SW3", 31);
+EcLamp pbMyLampThree = new EcLamp(16, 16, 32);
+//--
+void stHerPannelThree(){
+  pbHerPannelThree.cmPannelID=pbMyFrameThree.cmID;
+  pbHerPannelThree.ccAddElement(pbMyFrameThree);
+  pbHerPannelThree.ccAddElement(pbMyButtonThree);
+  pbHerPannelThree.ccAddElement(pbMyLampThree);
+  fsReposPannelThree();
+}//+++
+void fsReposPannelThree(){
+  pbMyFrameThree.ccRepos(pbHerPannelThree.cmOrigin, 1, 1);
+  pbMyButtonThree.ccRepos(pbMyFrameThree.ccGetPos(), 15, 25);
+  pbMyLampThree.ccRepos(pbMyButtonThree.ccGetPos(), 16, 0);
+}//+++
+// </editor-fold>  
+
+
+//< <<< <<< <<< <<< <<< Pannels
+
+
+
+
+
+//* *** *** *** *** ***
+//*
+//* Utility
+//*
+//* *** *** *** *** ***
+//- --- --- ---
+
+void fnTextInt(String pxLable,int pxVal,int pxLine){
+  text(pxLable+nf(pxVal,4),16,16*pxLine);
+}//+++
+
+//< <<< <<< <<< <<< <<< Utility
+
+
+
+//* *** *** *** *** ***
+//*
+//* Class
+//*
+//* *** *** *** *** ***
+//- --- --- ---
+
+//- --- --- ---
+//- system
+//- --- --- ---
+
+class EcContainer{
+  ArrayList<EcPannel> lpList;
+  EcContainer(){
+    lpList=new ArrayList<EcPannel>();
+  }
+  //--
+  void ccDrawElemt(){
+    for(EcPannel it:lpList){
+      if(it.cmEnable){it.ccUpdate();}
+    }
+  }
+  //--
+  int  ccCheckMouseID(){
+    int lpID=0;
+    for (int i = lpList.size()-1; i >= 0; i--) {EcPannel iT = lpList.get(i);
+      if(iT.cmEnable && iT.ccCkechMouseID()!=0){lpID=iT.ccCkechMouseID();return lpID;}
+    }
+    //--
+    return lpID;
+    //--
+  }
+  //--
+  EcPannel ccGetPannel(int pxID){
+    EcPannel lpRes=null;
+    for(EcPannel it:lpList){
+      if(it.cmPannelID==pxID){
+        lpRes=it;
+      }
+    }
+    return lpRes;
+  }
+  //--
+  void ccAddPannel(EcPannel pxPannel){
+    lpList.add(pxPannel);
+  }
+  //--
+  void ccSetPriority(int pxID){
+    EcPannel lpTarget=ccGetPannel(pxID);
+    if(lpTarget==null){return;}
+    lpList.remove(lpList.indexOf(lpTarget));
+    lpList.add(lpTarget);
+  }
+  //--
+}//+++
+
+class EcPannel{  
+  ArrayList<EcElement> cmList;
+  int[] cmOrigin;
+  int cmPannelID;
+  boolean cmEnable;
+  EcPannel(int pxX, int pxY){
+    cmList=new ArrayList<EcElement>();
+    cmOrigin=new int[4];
+    cmOrigin[0]=pxX;
+    cmOrigin[1]=pxY;
+    cmOrigin[2]=255;
+    cmOrigin[3]=255;
+    cmPannelID=0;
+    cmEnable=true;
+  }
+  void ccAddElement(EcElement pxElement){
+    cmList.add(pxElement);
+  }
+  void ccUpdate(){
+    for(EcElement iT:cmList){iT.ccUpdate();}
+  }
+  int ccCkechMouseID(){
+    int lpID=0;
+    for (int i = cmList.size()-1; i >= 0; i--) {EcElement iT = cmList.get(i);
+      if(iT.ccIsMouseOver()){
+        lpID=iT.cmID;
+        break;
+      }
+    }
+    return lpID;
+  }
+  void ccRepos(int pxX, int pxY){
+    cmOrigin[0]=pxX;
+    cmOrigin[1]=pxY;
+  }
+  //--
+}//+++
+
+//- --- --- ---
+//- Element
+//- --- --- ---
+class EcElement{
+  int cmX, cmY, cmW, cmH;
+  boolean cmAct;
+  int cmID;
+  String cmLable;
+  EcElement() {
+    cmX=8;cmY=8;
+    cmW=8;cmH=8;
+    cmAct=false;
+    cmID=0;
+    cmLable="nc";
+  }
+  int ccContains(int pxX, int pxY){
+    int lpResult=0;
+    lpResult+=(pxX<cmX)?1:0;
+    lpResult+=(pxX>cmX+cmW)?2:0;
+    lpResult+=(pxY<cmY)?10:0;
+    lpResult+=(pxY>cmY+cmH)?20:0;
+    return lpResult;
+  }
+  int ccContains(int[] pxPos){
+    return ccContains(pxPos[0],pxPos[1]);
+  }
+  boolean ccIsMouseOver(){
+    return ccContains(mouseX,mouseY)==0;
+  }
+  void ccShiftPos(int pxOffsetX, int pxOffsetY){
+    cmX+=pxOffsetX;
+    cmY+=pxOffsetY;
+  }
+  void ccFlip(){cmAct=!cmAct;}
+  int[] ccGetPos(){
+    int[] lpPos=new int[4];
+    lpPos[0]=cmX;
+    lpPos[1]=cmY;
+    lpPos[2]=cmW;
+    lpPos[3]=cmH;
+    return lpPos;
+  }
+  void ccUpdate(){println("this should not happen");}
+  void ccRepos(int[] pxPos,int pxOffsetX,int pxOffsetY){
+    cmX=pxPos[0]+pxOffsetX+(pxOffsetY==0?pxPos[2]:0);
+    cmY=pxPos[1]+pxOffsetY+(pxOffsetX==0?pxPos[3]:0);
+  }
+  //--
+}//+++
+
+class EcFrame extends EcElement{
+  //--
+  int cmBaseColor;
+  EcFrame(int pxWidth, int pxHeight, int pxID,String pxLable){
+    super();
+    cmW=pxWidth;
+    cmH=pxHeight;
+    cmID=pxID;
+    cmBaseColor=0xDD;
+    cmLable=pxLable;
+  }
+  //--
+  @Override
+  void ccUpdate(){
+    fill(cmAct?color(0xEE,0xEE,0x77):cmBaseColor);
+    rect(cmX,cmY,cmW,cmH);
+    fill(0x33);text(cmLable,cmX+2,cmY+1);
+    rect(cmX+2,cmY+16,cmW-4,cmH-18);
+  }
+  //--
+}//+++
+
+class EcButton extends EcElement{
+  //--
+  EcButton(int pxWidth, int pxHeight,String pxLable, int pxID){
+    super();
+    cmW=pxWidth;
+    cmH=pxHeight;
+    cmID=pxID;
+    cmLable=pxLable;
+  }
+  //--
+  @Override
+  void ccUpdate(){
+    fill(0x55);rect(cmX,cmY,cmW,cmH);    
+    fill(ccIsMouseOver()?0x99:0x88);stroke(0xBB);rect(cmX+1,cmY+1,cmW-3,cmH-3);noStroke();
+    fill(cmAct?color(0xEE,0xEE,0x77):0x33);textAlign(CENTER,CENTER);text(cmLable,cmX+cmW/2,cmY+cmH/2-2);textAlign(LEFT,TOP);
+  }
+  //--
+}//+++
+
+class EcLamp extends EcElement{
+  //--
+  EcLamp(int pxWidth, int pxHeight, int pxID){
+    super();
+    cmW=pxWidth;
+    cmH=pxHeight;
+    cmID=pxID;
+  }
+  //--
+  @Override
+  void ccUpdate(){
+    fill(0xBB);ellipse(cmX+cmW/2,cmY+cmH/2,cmW,cmH);
+    fill(cmAct?color(0xEE,0xEE,0x77):0x44);ellipse(cmX+cmW/2,cmY+cmH/2,cmW-2,cmH-2);
+  }
+  //--
+}//+++
+
+//< <<< <<< <<< <<< <<< Class
+
+//EOF
